@@ -143,12 +143,12 @@ function OrderSummary() {
                     <h6 className="my-0">{item.product.name}</h6>
                     <small className="text-muted">Quantity: {item.quantity}</small>
                   </div>
-                  <span className="text-muted">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-muted">${(item.product.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
               <li className="list-group-item d-flex justify-content-between">
-                <span>Total (USD)</span>
-                <strong>${total.toFixed(2)}</strong>
+                  <span>Total (USD)</span>
+                  <strong>${total.toFixed(2)}</strong>
               </li>
             </ul>
           </div>

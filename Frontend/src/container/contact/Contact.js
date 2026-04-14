@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
+import axios from "axios";
+import { address } from "../../App";
 
 function Contact() {
   const [form, setForm] = useState({
@@ -26,10 +28,17 @@ function Contact() {
     }
 
     setError("");
-    setSuccess("Your message has been sent successfully!");
 
-    // (Optional) Add backend request with axios
-    // axios.post("/api/contact", form);
+    // Send to backend
+    axios.post(address("contact"), form)
+      .then((res) => {
+        setSuccess(res.data.message || "Your message has been sent successfully!");
+        setForm({ name: "", email: "", message: "" });
+      })
+      .catch((err) => {
+        setError(err.response?.data?.message || "Failed to send message. Please try again.");
+        setSuccess("");
+      });
   };
 
   return (

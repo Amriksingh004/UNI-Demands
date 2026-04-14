@@ -30,7 +30,7 @@ function OrderDetails() {
     if (!reason) return;
 
     try {
-      await axiosInstance.post(address("orders/replacement/request"), {
+      await axiosInstance.post(address("api/orders/replacement/request"), {
         orderId,
         productId,
         reason,
@@ -47,7 +47,7 @@ function OrderDetails() {
   const fetchReplacementProducts = async (replacement) => {
     try {
       const deptId = replacement.product.department._id;
-      const res = await axiosInstance.get(address(`products?department=${deptId}`));
+      const res = await axiosInstance.get(address(`products/${deptId}`));
       setAvailableProducts(prev => ({ ...prev, [replacement._id]: res.data }));
     } catch (err) {
       console.error(err);
@@ -59,7 +59,7 @@ function OrderDetails() {
   const handleSelectNewProduct = async (replacementId, productId) => {
     try {
       await axiosInstance.post(
-        address(`orders/replacement/${replacementId}/select-new`),
+        address(`api/orders/replacement/${replacementId}/select-new`),
         { newProductId: productId }
       );
       toastr.success("Replacement completed!");

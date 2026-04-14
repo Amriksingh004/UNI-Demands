@@ -15,6 +15,7 @@ import OrderHeaderModel from "../models/OrderHeader.js";
 // server/routes/staticRoutes.js
 // ... existing imports
 import { getOrderWithItems, requestReplacement } from "../controllers/ReplacementController.js";
+import { sendContactMessage } from "../controllers/ContactController.js";
 
 
 
@@ -123,6 +124,24 @@ const uploadUser = multer({ storage: storageUser });
 
 router.post("/user/register", uploadUser.single("profilePic"), Register);
 router.post("/user/login", Login)
+
+router.post("/contact", sendContactMessage);
+
+// Test email endpoint (for debugging)
+router.get("/test-email", async (req, res) => {
+  try {
+    const { sendEmail } = await import("../services/emailService.js");
+    await sendEmail(
+      process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+      "Test Email from UNI-Demands",
+      "<h2>Test Email</h2><p>If you see this, the email service is working!</p>"
+    );
+    res.status(200).json({ message: "Test email sent successfully" });
+  } catch (err) {
+    console.error("Test email error:", err);
+    res.status(500).json({ message: "Test email failed", error: err.message });
+  }
+});
 
 router.get("/cart", anyAuthMiddleware, GetCartItems);
 router.post("/addToCart", anyAuthMiddleware, AddToCart);

@@ -2,6 +2,10 @@
 import OrderHeaderModel from "../models/OrderHeader.js";
 import OrderDetailsModel from "../models/OrderDetails.js";
 import ReplacementModel from "../models/Replacement.js";
+import ProductModel from "../models/Product.js";
+import UserModel from "../models/User.js";
+import { sendEmail } from "../services/emailService.js";
+import { sendSms } from "../services/twilioSmsService.js";
 
 // ------------------
 // Get all orders for a user
@@ -96,6 +100,39 @@ export const requestReplacement = async (req, res) => {
     });
 
     await replacement.save();
+
+    // Send notification (email and SMS) to the user about replacement request
+    try {
+      // Fetch order header with user info
+      const orderHeader = await OrderHeaderModel.findById(orderId).populate('user').lean();
+
+      // Fetch product details
+      const product = await ProductModel.findById(productId).lean();
+
+      const userEmail = orderHeader?.user?.email;
+      const userPhone = orderHeader?.phone || orderHeader?.user?.phone;
+
+      const subject = `Replacement Request Received - Order #${orderId}`;
+      const html = `
+        <h2>Replacement Request Received</h2>
+        <p>We have received your replacement request for order <strong>#${orderId}</strong>.</p>
+        <p>Product: <strong>${product?.name || 'Selected Product'}</strong></p>
+        <p>Reason: <strong>${reason}</strong></p>
+        <p>Please select a replacement product from our inventory. You will receive another notification once you select a new product.</p>
+      `;
+
+      if (userEmail) {
+        await sendEmail(userEmail, subject, html);
+      }
+
+      if (userPhone) {
+        const smsBody = `Replacement request received for Order #${orderId}. Product: ${product?.name || 'item'}. Reason: ${reason}`;
+        await sendSms(userPhone, smsBody);
+      }
+    } catch (notifyErr) {
+      console.error('Error sending replacement request notifications:', notifyErr);
+    }
+
     return res.status(201).json({ message: "Replacement requested", replacement });
   } catch (err) {
     console.error(err);
@@ -136,6 +173,37 @@ export const selectNewProduct = async (req, res) => {
     const items = await OrderDetailsModel.find({ orderHeader: orderId });
     const newTotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     await OrderHeaderModel.findByIdAndUpdate(orderId, { totalAmount: newTotal });
+
+    // Send notification (email and SMS) to the user about replacement completion
+    try {
+      // Fetch order header with user info
+      const orderHeader = await OrderHeaderModel.findById(orderId).populate('user').lean();
+
+      // Fetch new product details
+      const newProduct = await ProductModel.findById(newProductId).lean();
+
+      const userEmail = orderHeader?.user?.email;
+      const userPhone = orderHeader?.phone || orderHeader?.user?.phone;
+
+      const subject = `Replacement Completed - Order #${orderId}`;
+      const html = `
+        <h2>Replacement Completed</h2>
+        <p>Your replacement for order <strong>#${orderId}</strong> has been completed.</p>
+        <p>New product: <strong>${newProduct?.name || 'Selected Product'}</strong></p>
+        <p>If you have any questions, reply to this email or contact support.</p>
+      `;
+
+      if (userEmail) {
+        await sendEmail(userEmail, subject, html);
+      }
+
+      if (userPhone) {
+        const smsBody = `Replacement completed for Order #${orderId}. New product: ${newProduct?.name || ''}`;
+        await sendSms(userPhone, smsBody);
+      }
+    } catch (notifyErr) {
+      console.error('Error sending replacement notifications:', notifyErr);
+    }
 
     return res.status(200).json({
       message: "Replacement completed and order updated with new product",

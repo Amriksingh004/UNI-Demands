@@ -122,7 +122,7 @@ function ShoppingCart() {
                   return (
                     <tr key={item._id}>
                       <td>{item.product.name}</td>
-                      <td>${item.product.price.toFixed(2)}</td>
+                        <td>${item.product.price.toFixed(2)}</td>
                       <td>
                         <div className="d-flex align-items-center">
                           <button
@@ -141,7 +141,7 @@ function ShoppingCart() {
                           </button>
                         </div>
                       </td>
-                      <td>${(item.product.price * item.quantity).toFixed(2)}</td>
+                        <td>${(item.product.price * item.quantity).toFixed(2)}</td>
                       <td>
                         <button
                           className="btn btn-danger btn-sm"
@@ -156,7 +156,7 @@ function ShoppingCart() {
               </tbody>
             </table>
             <div className="d-flex justify-content-end align-items-center mt-4">
-              <h4 className="mx-3">Grand Total: ${calculateTotal().toFixed(2)}</h4>
+                <h4 className="mx-3">Grand Total: ${calculateTotal().toFixed(2)}</h4>
               <button className="btn btn-primary btn-lg" onClick={()=>navigate(ROUTES.orderSummary.name)}>
                 Proceed to Checkout
               </button>

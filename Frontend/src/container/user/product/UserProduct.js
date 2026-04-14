@@ -55,7 +55,7 @@ function UserProduct() {
                       <div class="card-body d-flex flex-column justify-content-between">
                       <div class="row align-items-start ">
                         <h5 class="card-title font-weight-bold text-left   col-8">${row.name}</h5>
-                        <span class="col-4 font-weight-bold rounded text-white bg-success">$${row.price}</span>
+                          <span class="col-4 font-weight-bold rounded text-white bg-success">$${row.price}</span>
                         <p class="mx-3 text-left alert-secondary border form-control" >${row.description}</p>
                       </div>
                         

@@ -23,4 +23,18 @@ async function createMessage(orderId, orderTotal, phoneNumber) {
   }
 }
 
+export async function sendSms(phoneNumber, body) {
+  try {
+    const to = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
+    const message = await client.messages.create({
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to,
+      body,
+    });
+    console.log(`SMS sent to ${to}: ${message.sid}`);
+  } catch (error) {
+    console.error(`Error sending SMS to ${phoneNumber}:`, error);
+  }
+}
+
 export default createMessage;

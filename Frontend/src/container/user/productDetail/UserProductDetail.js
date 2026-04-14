@@ -166,7 +166,7 @@ function UserProductDetail() {
           </div>
           <div className="col-md-6">
             <h2 className="mb-3">{product.name}</h2>
-            <h4 className="text-primary mb-3">${product.price.toFixed(2)}</h4>
+              <h4 className="text-primary mb-3">${product.price.toFixed(2)}</h4>
             <p className="text-muted">{product.description}</p>
             <p><strong>Quantity Available:</strong> {product.quantity}</p>
 
