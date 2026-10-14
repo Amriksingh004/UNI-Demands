@@ -15,6 +15,10 @@ const allowedLocalOrigins = [
   'http://localhost:5173',
 ];
 
+if (process.env.CLIENT_URL) {
+  allowedLocalOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true); // allow non-browser tools or same-origin
@@ -47,11 +51,13 @@ app.use(express.static("public/userImg"));
 
 
 
+const PORT = process.env.PORT || 8080;
+
 mongoose.connect(process.env.DB_URL).then((d) => {
   console.log("database Connected");
 
-  app.listen(process.env.PORT, () => {
-    console.log("server started at http://localhost:" + process.env.PORT)
+  app.listen(PORT, () => {
+    console.log("server started at http://localhost:" + PORT)
   });
 }).catch((e) => {
   console.log(e);
